@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>MailFlow App</title>
+<style>
+body {
+  font-family: Arial;
+  background: #0f172a;
+  color: white;
+  text-align: center;
+}
+.container {
+  max-width: 600px;
+  margin: auto;
+  padding: 20px;
+  background: #1e293b;
+  border-radius: 10px;
+}
+textarea, input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+}
+button {
+  padding: 12px;
+  margin-top: 10px;
+  background: green;
+  color: white;
+  border: none;
+}
+#log {
+  margin-top: 15px;
+  background: black;
+  height: 150px;
+  overflow-y: scroll;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+<h2>📧 MailFlow</h2>
+
+<textarea id="emails" placeholder="Emails comma separated"></textarea>
+<input id="subject" placeholder="Subject">
+<textarea id="message" placeholder="Message"></textarea>
+
+<button onclick="send()">Send Emails</button>
+
+<div id="log"></div>
+</div>
+
+<script>
+async function send() {
+  const emails = document.getElementById("emails").value.split(",");
+  const subject = document.getElementById("subject").value;
+  const message = document.getElementById("message").value;
+
+  const log = document.getElementById("log");
+  log.innerHTML = "Sending...<br>";
+
+  const res = await fetch("/send", {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({emails, subject, message})
+  });
+
+  const data = await res.json();
+
+  data.forEach(d => {
+    log.innerHTML += d.email + " → " + d.status + "<br>";
+  });
+}
+</script>
+
+</body>
+</html>
